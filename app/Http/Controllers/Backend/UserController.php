@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
@@ -15,7 +16,12 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('backend.users.index');
+        $users = User::paginate(15);
+        // $users = User::simplePaginate(15);
+        // $users = User::get();
+        return view('backend.users.index')->with([
+            'users' => $users
+        ]);
     }
 
     /**
