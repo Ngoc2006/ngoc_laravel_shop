@@ -15,7 +15,10 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::paginate(15);
+
+        $products = Product:: join('users', 'users.id','products.user_id')
+                            ->select('products.*', 'users.name as user_name')
+                            ->paginate(15);
         return view('backend.products.index')->with(['products' => $products]);
     }
 

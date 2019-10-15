@@ -42,6 +42,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Tên sản phẩm</th>
+                                <th>User</th>
                                 <th>Giá bán</th>
                                 <th>Status</th>
                                 <th>Mô tả</th>
@@ -52,6 +53,7 @@
                                 <tr>
                                     <td>{{ $product->id }}</td>
                                     <td>{{ $product->name }}</td>
+                                    <td>{{ $product->user_name }}</td>
                                     <td>{{ $product->sale_price }}</td>
                                     <td>{{ $product->status }}</td>
                                     <td><span class="tag tag-success">Approved</span></td>
