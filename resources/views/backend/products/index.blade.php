@@ -53,7 +53,7 @@
                                 <tr>
                                     <td>{{ $product->id }}</td>
                                     <td>{{ $product->name }}</td>
-                                    <td>{{ $product->user_name }}</td>
+                                    <td>{{ $product->user->name }}</td>
                                     <td>{{ $product->sale_price }}</td>
                                     <td>{{ $product->status }}</td>
                                     <td><span class="tag tag-success">Approved</span></td>

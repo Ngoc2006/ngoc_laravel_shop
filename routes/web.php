@@ -77,3 +77,7 @@ Route::group([
         Route::get('/', 'ContactController@index')->name('contact.index');
     });
 });
+
+//laravel tao duong dan
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');
