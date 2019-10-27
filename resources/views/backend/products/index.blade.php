@@ -46,6 +46,7 @@
                                 <th>Giá bán</th>
                                 <th>Status</th>
                                 <th>Mô tả</th>
+                                <th>Hành động</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -57,6 +58,15 @@
                                     <td>{{ $product->sale_price }}</td>
                                     <td>{{ $product->status }}</td>
                                     <td><span class="tag tag-success">Approved</span></td>
+                                    <td><a style="display: inline-block; width: 67px;" href="{{ route('backend.product.show', $product->id) }}" class="btn btn-success">Show</a>
+                                        <a style="display: inline-block; width: 67px;" href="{{ route('backend.product.edit',$product->id) }}" class="btn btn-warning">Edit</a>
+
+                                        <form style="display: inline-block;" action="{{ route('backend.product.destroy', $product->id) }}" method="post" accept-charset="utf-8">
+                                            @csrf
+                                            {{method_field('delete')}}
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
                                 </tr>
                                 @endforeach
                             </tbody>

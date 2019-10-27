@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
 
+
 class CategoryController extends Controller
 {
     /**
@@ -26,7 +27,8 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        return view('backend.categories.create');
+        $categories = Category::get();
+        return view('backend.categories.create')->with(['categories' => $categories]);
     }
 
     /**
@@ -37,7 +39,27 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+			'name' => ['required', 'min:10', 'max:255'],
+			'parent_id' => ['required', 'numeric'],
+			'depth' => ['required', 'numeric'],
+		]);
+		$name = $request->get('name');
+		$parent_id = $request->get('parent_id');
+		$depth = $request->get('depth');
+		//dd($name);
+		$category = new Category();
+		$category->name = $request->get('name');
+		$category->slug = \Illuminate\Support\Str::slug($request->get('name'));
+		//		$category->category_id = $request->get('category_id');
+		//		$category->origin_price = $request->get('origin_price');
+		//		$category->sale_price = $request->get('sale_price');
+		$category->parent_id = $request->get('parent_id');
+		$category->depth = $request->get('depth');
+//		$category->user_id = Auth::user()->id;
+		//dd($category->name);
+		$category->save();
+		return redirect()->route('backend.category.index');
     }
 
     /**
@@ -59,7 +81,11 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        // Lấy dữ liệu với $id
+        $item = Category::find($id);
+        
+		// Gọi đến view edit
+		return view('backend.categories.edit')->with('item', $item);
     }
 
     /**
@@ -71,7 +97,22 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // Nhận dữ liệu từ $request
+		$name = $request->get('name');
+		$slug = $request->get('slug');
+		$parent_id = $request->get('parent_id');
+		$depth = $request->get('depth');
+		// Tìm todo tương ứng với id
+		$category = Category::find($id);
+		//Cập nhật dữ liệu mới
+		$category->name = $name;
+		$category->slug = $slug;
+		$category->depth = $depth;
+		$category->parent_id = $parent_id;
+		// Lưu dữ liệu
+		$category->save();
+		//Chuyển hướng đến trang danh sách
+		return redirect()->route('backend.category.index');
     }
 
     /**
@@ -82,6 +123,11 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        // Xoá với id tương ứng
+        // dd($id);
+        $result = Category::destroy($id);
+        // dd($result);
+		// Chuyển hướng về trang danh sách
+		return redirect()->route('backend.category.index');
     }
 }

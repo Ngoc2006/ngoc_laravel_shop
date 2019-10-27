@@ -45,6 +45,7 @@
                                 <th>ID</th>
                                 <th>Tên danh mục</th>
                                 <th>Parent_id</th>
+                                <th>Hành động</th>
                                 <th>Mô tả</th>
                             </tr>
                             </thead>
@@ -54,6 +55,16 @@
                                     <td>{{ $category->id }}</td>
                                     <td>{{ $category->name }}</td>
                                     <td>{{ $category->parent_id }}</td>
+                                    <td>
+                                        
+                                        <a style="display: inline-block; width: 67px;" href="{{ route('backend.category.edit',$category->id) }}" class="btn btn-warning">Edit</a>
+
+                                        <form style="display: inline-block;" action="{{ route('backend.category.destroy', $category->id) }}" method="post" accept-charset="utf-8">
+                                        @csrf
+                                            {{method_field('delete')}}
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
                                     <td><span class="tag tag-success">Approved</span></td>
                                 </tr>
                                 @endforeach

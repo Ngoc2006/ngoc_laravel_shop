@@ -45,6 +45,7 @@
                                 <th>Tên</th>
                                 <th>Thời gian</th>
                                 <th>Status</th>
+                                <th>Hành động</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -55,6 +56,15 @@
                                 <td>{{ $user->name }}</td>
                                 <td>{{ $user->created_at }}</td>
                                 <td><span class="tag tag-success">Approved</span></td>
+                                <td><a style="display: inline-block; width: 67px;" href="{{ route('backend.user.show', $user->id) }}" class="btn btn-success">Show</a>
+                                    <a style="display: inline-block; width: 67px;" href="{{ route('backend.user.edit',$user->id) }}" class="btn btn-warning">Edit</a>
+
+                                    <form style="display: inline-block;" action="{{ route('backend.user.destroy', $user->id) }}" method="post" accept-charset="utf-8">
+                                        @csrf
+                                        {{method_field('delete')}}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </td>
                             </tr>
                             @endforeach
  

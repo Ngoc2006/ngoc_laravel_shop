@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\User;
+use App\Http\Requests\FileRequest;
+use Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
 
-class UserController extends Controller
+class UploadFileController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,12 +16,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(15);
-        // $users = User::simplePaginate(15);
-        // $users = User::get();
-        return view('backend.users.index')->with([
-            'users' => $users
-        ]);
+        return view('upload_file')
     }
 
     /**
@@ -31,7 +26,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        return View('backend.users.create');
+        //
     }
 
     /**
@@ -53,9 +48,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        $item = User::find($id);
-        // dd($item);
-        return view('backend.users.show')->with('item', $item);
+        //
     }
 
     /**
@@ -89,9 +82,6 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        // Xoá với id tương ứng
-        User::destroy($id);
-        // Chuyển hướng về trang danh sách
-        return redirect()->route('backend.user.index');
+        //
     }
 }
