@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend;
 
 // use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use App\User;
 use App\Models\Product;
 use App\Models\Image;
 use App\Models\Category;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreProductRequest;
+use Illuminate\Support\Facades\Gate;
 
 
 class ProductController extends Controller
@@ -22,9 +24,14 @@ class ProductController extends Controller
      */
     public function index()
     {
-
-        $products = Product::paginate(15);
-        return view('backend.products.index')->with(['products' => $products]);
+        // $user = Auth::user();
+        // $user->is_admin == 1;
+        $products = Product::orderBy('id', 'desc')->paginate(15);
+        if (Gate::allows('index-product', $products)) {
+			return view('backend.products.index')->with(['products' => $products,]);
+		} else {
+			dd('bạn k có quyền xem danh sách sản phẩm');
+		}
     }
 
     /**
@@ -38,7 +45,7 @@ class ProductController extends Controller
         // Storage::disk('local2')->put('file1.txt', 'Nguyen Thi Ngoc');
         // Storage::disk('local')->put('file.txt', 'Contents');
         // Storage::disk('local')->put('file.txt', 'Contents');
-        Storage::disk('public')->put('test1.txt', 'ngoc');
+        // Storage::disk('public')->put('test1.txt', 'ngoc');
 
         //lay file
         // $contents = Storage::get('test1.txt');
@@ -69,9 +76,13 @@ class ProductController extends Controller
 
         // dd(1);
         $categories = Category::get();
-        return view('backend.products.create')->with([
-            'categories' => $categories
-        ]);
+        if (Gate::allows('create-product', $categories)) {
+			return view('backend.products.create')->with([
+				'categories' => $categories,
+			]);
+		} else {
+			dd('bạn k có quyền tạo sản phẩm');
+		}
     }
 
     /**
@@ -115,38 +126,139 @@ class ProductController extends Controller
         //         ->withErrors($validator)
         //         ->withInput();
         // }
+
+        
+        // $info_images = [];
+        // if ($request->hasFile('images')){
+
+        //     //Cachs 1: luu anh vao storage
+        //     // $file = $request->file('image');
+        //     // // Lưu vào trong thư mục storage
+        //     // $path = $file->store('images');
+
+        //     //cachs 2: luu anh vao public
+        //     // $file = $request->file('image');
+        //     // $name = $file->getClientOriginalName();
+        //     // $file->move('image_2', $name);
+
+        //     //truong hop luu nhieu file anh
+        //     // dd(2);
+        //     $images = $request->file('images');
+        //     foreach($images as $key => $image){
+        //         $id = $key + 1;
+        //         // $username = $key;
+        //         $namefile = $id . '.png';
+        //         // $namefile = $image->getClientOriginalName(); //lay ten goc ban dau
+        //         $url = 'storage/' . $namefile;
+        //         // $file -> store('images');
+        //         Storage::disk('public')->putFileAs('products', $image, $namefile);
+        //         $info_images[]=[
+        //             'url'=> $url,
+        //             'name' => $namefile,
+        //         ];
+        //     }
+        // }else{
+        //     dd('khong co file');
+        // }
+
+
+        // validate với form
+        $images = $request->image;
+        $rules = [
+            'image.*' => 'max:2000|image',
+            'image' => 'required',
+        ];
+        $messages = [
+            'image.required' => ':attribute không được bỏ trống.',
+            'image.*.max' => ':attribute không được quá 2MB.',
+            'image.*.image' => ':attribute không đúng định dạng',
+        ];
+        // $validator = Validator::make($request->all(),
+        //  [
+        //      'name' => 'required|min:10|max:255',
+        //      'origin_price' => 'required|numeric',
+        //      'sale_price' => 'required|numeric',
+        //  ],
+        //  [
+        //      'required' => ':attribute không được để trống',
+        //      'min' => ':attribute không được nhỏ hơn :min',
+        //      'max' => ':attribute không được lớn hơn :max',
+        //  ],
+        //  [
+        //      'name' => 'Tên sản phẩm',
+        //      'origin_price' => 'Giá gốc',
+        //      'sale_price' => 'Giá bán',
+        //  ]
+        // );
+        // if ($validator->errors()) {
+        //  return back()
+        //      ->withErrors($validator)
+        //      ->withInput();
+        // }
+        // validate  mặc định
+        $validatedData = $request->validate([
+            'name' => ['required', 'min:5', 'max:255'],
+            'origin_price' => ['required', 'numeric'],
+            'sale_price' => ['required', 'numeric'],
+        ]);
+        // $info_images = [];
+        // if ($request->hasFile('images')) {
+        //  $images = $request->file('images');
+        //  foreach ($images as $key => $image) {
+        //      // $id = $key;
+        //      //$username = $key;
+        //      //$namefile = $id . '.png'; // đặt tên cho mỗi ảnh theo key
+        //      $namefile = $image->getClientOriginalName();
+        //      $url = 'storage/' . $namefile;
+        //      Storage::disk('public')->putFileAs('products', $image, $namefile);
+        //      $info_images[] = [
+        //          'url' => $url,
+        //          'name' => $namefile,
+        //      ];
+        //      //$image= new Image();
+        //  }
+        //  //dd(2);
+        // } else {
+        //  dd('khong co file');
+        // }
+        //
         $info_images = [];
-        if ($request->hasFile('images')){
-
-            //Cachs 1: luu anh vao storage
-            // $file = $request->file('image');
-            // // Lưu vào trong thư mục storage
-            // $path = $file->store('images');
-
-            //cachs 2: luu anh vao public
-            // $file = $request->file('image');
-            // $name = $file->getClientOriginalName();
-            // $file->move('image_2', $name);
-
-            //truong hop luu nhieu file anh
-            // dd(2);
-            $images = $request->file('images');
-            foreach($images as $key => $image){
-                $id = $key + 1;
-                // $username = $key;
-                $namefile = $id . '.png';
-                // $namefile = $image->getClientOriginalName(); //lay ten goc ban dau
-                $url = 'storage/' . $namefile;
-                // $file -> store('images');
-                Storage::disk('public')->putFileAs('products', $image, $namefile);
-                $info_images[]=[
-                    'url'=> $url,
-                    'name' => $namefile,
-                ];
+        if ($request->hasFile('images')) {
+            $attributes = [];
+            foreach ($images as $key => $value) {
+                $name_image = $value->getClientOriginalName();
+                $attribute['image.' . $key] = $name_image;
             }
-        }else{
-            dd('khong co file');
+        } else {
+            $attributes = [
+                'image' => 'Ảnh',
+            ];
         }
+        $validator = Validator::make($request->all(), $rules, $messages, $attributes);
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        $path_images = [];
+        $info_images = [];
+        foreach ($images as $image) {
+            //$img = new Image();
+            $type_image = $image->getClientOriginalExtension();
+            $name_image = $image->getClientOriginalName();
+            $time = time();
+            // $img->path = $image['url'];
+            // $img->product_id = $product->id;
+            // $img->save();
+            $path = $image->storeAS('public/products', $name_image . '_' . $time . '.' . $type_image);
+            $path_images = $path;
+            $info_images[] = [
+                'name' => $name_image,
+                'url' => $path_images,
+            ];
+            dd($info_images);
+        }
+
 
         $product = new Product();
         $product->name = $request->get('name');
@@ -198,13 +310,29 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
+
+        $user = Auth::user();
+
         //Lấy dữ liệu với id
         $product = Product::find($id);
-        //Lấy dữ liệu categories
-        $categories = Category::get();
-        //Gọi đến view edit
-        return view('backend.products.edit')->with('product', $product)->with(['categories' => $categories]);
 
+        if($user->can('update', $product)){
+             // Lấy dữ liệu categories
+             $categories = Category::get();
+            //Gọi đến view edit
+            return view('backend.products.edit')->with('product', $product)->with(['categories' => $categories]);
+        }else{
+            return abort(404);
+        }
+
+        if (Gate::allows('update-product', $product)){
+            // Lấy dữ liệu categories
+            $categories = Category::get();
+            //Gọi đến view edit
+            return view('backend.products.edit')->with('product', $product)->with(['categories' => $categories]);
+        }else{
+            return abort(404);
+        }
     }
 
     /**

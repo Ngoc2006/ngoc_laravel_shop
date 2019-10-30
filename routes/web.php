@@ -101,3 +101,7 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 
+// Route::get('/edit/{product}', function (\App\Models\Product $product){
+//     dd(1);
+//     return view('backend.products.edit');
+// })->middleware('can:update,product');

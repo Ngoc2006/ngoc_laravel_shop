@@ -16,7 +16,7 @@ class UploadFileController extends Controller
      */
     public function index()
     {
-        return view('upload_file')
+        return view('upload_file');
     }
 
     /**
