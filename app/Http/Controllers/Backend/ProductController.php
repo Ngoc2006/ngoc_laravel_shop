@@ -22,16 +22,31 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         // $user = Auth::user();
         // $user->is_admin == 1;
-        $products = Product::orderBy('id', 'desc')->paginate(15);
-        if (Gate::allows('index-product', $products)) {
-			return view('backend.products.index')->with(['products' => $products,]);
-		} else {
-			dd('bạn k có quyền xem danh sách sản phẩm');
-		}
+
+        //phân quyền
+        // $products = Product::orderBy('id', 'desc')->paginate(15);
+        // if (Gate::allows('index-product', $products)) {
+		// 	return view('backend.products.index')->with(['products' => $products,]);
+		// } else {
+		// 	dd('bạn k có quyền xem danh sách sản phẩm');
+        // }
+
+
+        $products = Product::with('category')->paginate();
+
+        // dd($products);
+        $categories = Category::get();
+        //giữ lại session thông báo trên client
+        session()->keep(['success']);
+
+        return view('backend.products.index')->with([
+            'products' => $products,
+            'categories' => $categories
+        ]);
     }
 
     /**
@@ -222,42 +237,42 @@ class ProductController extends Controller
         //  dd('khong co file');
         // }
         //
-        $info_images = [];
-        if ($request->hasFile('images')) {
-            $attributes = [];
-            foreach ($images as $key => $value) {
-                $name_image = $value->getClientOriginalName();
-                $attribute['image.' . $key] = $name_image;
-            }
-        } else {
-            $attributes = [
-                'image' => 'Ảnh',
-            ];
-        }
-        $validator = Validator::make($request->all(), $rules, $messages, $attributes);
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
-                ->withInput();
-        }
-        $path_images = [];
-        $info_images = [];
-        foreach ($images as $image) {
-            //$img = new Image();
-            $type_image = $image->getClientOriginalExtension();
-            $name_image = $image->getClientOriginalName();
-            $time = time();
-            // $img->path = $image['url'];
-            // $img->product_id = $product->id;
-            // $img->save();
-            $path = $image->storeAS('public/products', $name_image . '_' . $time . '.' . $type_image);
-            $path_images = $path;
-            $info_images[] = [
-                'name' => $name_image,
-                'url' => $path_images,
-            ];
-            dd($info_images);
-        }
+        // $info_images = [];
+        // if ($request->hasFile('images')) {
+        //     $attributes = [];
+        //     foreach ($images as $key => $value) {
+        //         $name_image = $value->getClientOriginalName();
+        //         $attribute['image.' . $key] = $name_image;
+        //     }
+        // } else {
+        //     $attributes = [
+        //         'image' => 'Ảnh',
+        //     ];
+        // }
+        // $validator = Validator::make($request->all(), $rules, $messages, $attributes);
+        // if ($validator->fails()) {
+        //     return back()
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
+        // $path_images = [];
+        // $info_images = [];
+        // foreach ($images as $image) {
+        //     //$img = new Image();
+        //     $type_image = $image->getClientOriginalExtension();
+        //     $name_image = $image->getClientOriginalName();
+        //     $time = time();
+        //     // $img->path = $image['url'];
+        //     // $img->product_id = $product->id;
+        //     // $img->save();
+        //     $path = $image->storeAS('public/products', $name_image . '_' . $time . '.' . $type_image);
+        //     $path_images = $path;
+        //     $info_images[] = [
+        //         'name' => $name_image,
+        //         'url' => $path_images,
+        //     ];
+        //     // dd($info_images);
+        // }
 
 
         $product = new Product();
@@ -275,15 +290,21 @@ class ProductController extends Controller
         
 
         // dd($product);
-        $product->save();
-        foreach($info_images as $image){
-            $img = new Image();
-            $img->name = $image['name'];
-            $img->path = $image['url'];
-            $img->product_id = $product->id;
-            // dd($img);
-            $img->save();
+        $save = $product->save();
+        // foreach($info_images as $image){
+        //     $img = new Image();
+        //     $img->name = $image['name'];
+        //     $img->path = $image['url'];
+        //     $img->product_id = $product->id;
+        //     // dd($img);
+        //     $img->save();
 
+        // }
+
+        if($save){
+            $request->session()->flash('success', 'Tạo mới thành công!');
+        }else{
+            $request->session()->flash('error', 'Tạo mới không thành công!');
         }
 
         return redirect()->route('backend.product.index');
@@ -365,7 +386,12 @@ class ProductController extends Controller
         $product->content = $content;
 
          // Lưu dữ liệu
-         $product->save();
+         $save = $product->save();
+         if ($save) {
+             $request->session()->flash('success_update', 'Cập nhật sản phẩm thành công' . '<br>');
+         } else {
+             $request->session()->flash('fail_update', 'Cập nhật sản phẩm thất bại' . '<br>');
+         }
          //Chuyển hướng đến trang danh sách
          return redirect()->route('backend.product.index');
 

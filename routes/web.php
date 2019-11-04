@@ -105,3 +105,10 @@ Route::get('/home', 'HomeController@index')->name('home');
 //     dd(1);
 //     return view('backend.products.edit');
 // })->middleware('can:update,product');
+
+Route::get('/session/set', 'SessionController@set');
+Route::get('/session/get', 'SessionController@get');
+Route::get('/session/get2', 'SessionController@get2');
+
+Route::get('/cookie/set', 'CookieController@set');
+Route::get('/cookie/get', 'CookieController@get');

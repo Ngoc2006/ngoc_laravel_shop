@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -42,7 +43,28 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $name = $request->get('name');
+		$email = $request->get('email');
+		$password = $request->get('password');
+		//dd($name);
+		$user = new User();
+		$user->name = $request->get('name');
+		// $user->slug = \Illuminate\Support\Str::slug($request->get('name'));
+		//      $category->category_id = $request->get('category_id');
+		//      $category->origin_price = $request->get('origin_price');
+		//      $category->sale_price = $request->get('sale_price');
+		$user->email = $request->get('email');
+		$user->password = bcrypt($request->password);
+//      $category->user_id = Auth::user()->id;
+		//dd($user);
+		$user->save();
+		$save = $user->save();
+		if ($save) {
+			$request->session()->flash('success', 'Tạo user thành công' . '<br>');
+		} else {
+			$request->session()->flash('fail', 'Tạo user thất bại' . '<br>');
+		}
+		return redirect()->route('backend.user.index');
     }
 
     /**

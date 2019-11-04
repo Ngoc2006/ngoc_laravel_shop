@@ -14,6 +14,21 @@
             </div><!-- /.col -->
         </div><!-- /.row -->
     </div><!-- /.container-fluid -->
+    @if (session()->has('success'))
+        <span style="color: green">{!! session()->get('success') !!}</span>
+    @endif
+
+    @if (session()->has('fail'))
+        <span style="color: red">{!! session()->get('fail') !!}</span>
+    @endif
+
+    @if (session()->has('fail_update'))
+        <span style="color: red">{!! session()->get('fail_update') !!}</span>
+    @endif
+
+    @if (session()->has('success_update'))
+        <span style="color: green">{!! session()->get('success_update') !!}</span>
+    @endif
 @endsection
 @section('content')
     <div class="container-fluid">

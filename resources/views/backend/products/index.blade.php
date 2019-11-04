@@ -4,6 +4,13 @@
         <div class="row mb-2">
             <div class="col-sm-6">
                 <h1 class="m-0 text-dark">Danh sách sản phẩm</h1>
+                @if(session()->has('success'))
+                    <span style="font-size: 20px; color:green"> {{session()->get('success')}}</span>
+                @endif
+                @if(session()->has('error'))
+                    <span style="font-size: 20px; color:red">{{session()->get('error')}}</span>
+                @endif
+
             </div><!-- /.col -->
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
