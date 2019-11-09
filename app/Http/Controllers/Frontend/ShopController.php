@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class ShopController extends Controller
 {
@@ -15,8 +17,11 @@ class ShopController extends Controller
      */
     public function index()
     {
-        $products = Product::get();
-        return view('frontend.shop.index')->with('products', $products);
+        $categories = Cache::remember('categories', 10, function() {
+            return DB::table('categories')->get();
+        });
+        return view('frontend.shop.index')->with([
+            'categories' => $categories]);
     }
 
     /**

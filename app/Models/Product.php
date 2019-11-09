@@ -8,11 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    // protected $table = 'products'; //trong TH đặt tên ko đúng chuẩn or nó ko nhận số nhiều
-    public function user(){
-        return $this->belongsTo(User::class);
-    }
+    protected $table = 'products'; //trong TH đặt tên ko đúng chuẩn or nó ko nhận số nhiều
+    // public function user(){
+    //     return $this->belongsTo(User::class);
+    // }
     public function category(){
         return $this->belongsTo(Category::class);
     }
+
+    // public function category() {
+	// 	return $this->belongsTo('App\Models\Category');
+	// }
+    public function images() {
+        return $this->hasMany(Image::class);
+    }
+	public function user() {
+		return $this->belongsTo('App\User');
+	}
 }

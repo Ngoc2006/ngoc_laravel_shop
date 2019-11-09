@@ -10,10 +10,15 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-use Illuminate\Support\Facades\Route;
+// use Illuminate\Support\Facades\Route;
+//cache
+Route::get('/cache', 'HomeController@index');
+Route::get('/getCache', 'HomeController@getCache');
+// Của c là có phần mềm gì đó chạy ở cổng 8000 rồi nên nó ko nhận được
+// chạy local bình thường nè
 
 Route::get('/', function () {
+    // dd('aaaaaaaaaaaaaaaaaaaaa');
     return view('welcome');
 });
 Route::group([
@@ -92,7 +97,7 @@ Route::group([
         Route::get('/', 'CartController@index')->name('frontend.cart.index');
     });
     Route::group(['prefix' => 'contact'], function(){
-        Route::get('/', 'ContactController@index')->name('contact.index');
+        Route::get('/', 'ContactController@index')->name('frontend.contact.index');
     });
 });
 
@@ -112,3 +117,4 @@ Route::get('/session/get2', 'SessionController@get2');
 
 Route::get('/cookie/set', 'CookieController@set');
 Route::get('/cookie/get', 'CookieController@get');
+

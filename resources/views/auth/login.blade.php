@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+{{dd('Đang ở đây nha!')}}
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
